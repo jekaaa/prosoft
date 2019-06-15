@@ -2,13 +2,14 @@ import User from './modules/User'
 import Server from './modules/Server'
 import Table from './modules/Table'
 
-let user = new User();
-let server = new Server();
+const server = new Server();
 
 document.addEventListener('DOMContentLoaded', () => {
     let res = server.getUsers();
     if(res.result) {
-        console.log(users);
+        let items = res.result;
+        let table = new Table({ items });
+        table.render();
     }
     else console.log('Get users error ->', res.error);
 });
