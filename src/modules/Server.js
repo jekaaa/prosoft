@@ -35,7 +35,8 @@ export default class Server {
     }
     
     getUsers() {
-        let result = this.users.sort((user1, user2) => user1.name.toLowerCase() >= user2.name.toLowerCase() ? 1 : -1);
+        let result = JSON.parse(JSON.stringify(this.users));
+        result.sort((user1, user2) => user1.name.toLowerCase() >= user2.name.toLowerCase() ? 1 : -1);
         return { result };
     }
 
@@ -46,7 +47,7 @@ export default class Server {
 
     addUser(user) {
         let result = this.users[this.users.length - 1].id + 1;
-        this.users.push({ id: result, ...user });
+        this.users.push({ ...user, id: result });
         return { result };
     }
 

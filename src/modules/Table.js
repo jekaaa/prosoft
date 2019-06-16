@@ -1,4 +1,5 @@
 import Server from './Server'
+import EventEmitter from './EventEmitter'
 
 const server = new Server();
 
@@ -14,6 +15,8 @@ export default class Table {
         ];
         this.id = 'usersTable';
         this.content = null;
+        this.observer = new EventEmitter();
+        this.render();
     }
 
     render() {
@@ -21,6 +24,7 @@ export default class Table {
         let tBody = document.createElement('tbody');
         this._createTableHeader(tBody);
         this._createTableContent(tBody);
+        this.content.appendChild(tBody);
     }
 
     _createTableHeader(tBody) {
@@ -31,39 +35,55 @@ export default class Table {
            tr.appendChild(th);
         }
         tBody.appendChild(tr);
-        this.content.appendChild(tBody);
+    }
+
+    _createTableRow({ item, tBody }) {
+        let tr = document.createElement('tr');
+        for (let j = 0; j < this.names.length; j++) {
+            let td = document.createElement('td'); 
+            let type = this.names[j].type;
+            let button = document.createElement('button');
+            let id = item.id;
+
+            switch(type) {
+                case 'text':
+                    td.innerHTML = item[this.names[j].value];
+                    break;
+                case 'edit':
+                    button.addEventListener('click', () => {
+                        this.observer.emit('edit', item);
+                    });
+                    td.appendChild(button);
+                    break;
+                case 'delete':
+                    button.addEventListener('click', () => {
+                        this._deleteElement({ id, tBody });
+                    });
+                    td.appendChild(button);
+                    break;
+                default:
+                    break;
+            }
+            tr.appendChild(td);
+        }
+        return tr;
     }
 
     _createTableContent(tBody) {
-        for(let i = 0; i < this.items.length; i++) {
-            let tr = document.createElement('tr');
-            for (let j = 0; j < this.names.length; j++) {
-                let td = document.createElement('td'); 
-                let type = this.names[j].type;
-                let button = document.createElement('button');
-                let id = this.items[i].id;
+        for(let i = 0; i < this.items.length; i++) tBody.appendChild(this._createTableRow({ item: this.items[i], tBody }));
+    }
 
-                switch(type) {
-                    case 'text':
-                        td.innerHTML = this.items[i][this.names[j].value];
-                        break;
-                    case 'edit':
-                        td.appendChild(button);
-                        break;
-                    case 'delete':
-                        button.addEventListener('click', () => {
-                            this._deleteElement({ id, tBody });
-                        });
-                        td.appendChild(button);
-                        break;
-                    default:
-                        break;
-                }
-                tr.appendChild(td);
-            }
-            tBody.appendChild(tr);
-        }
-        this.content.appendChild(tBody);
+    addElement(item) {
+        this.items.push(item);
+        let tBody = this.content.children[0];
+        tBody.appendChild(this._createTableRow({ item, tBody }));
+    }
+
+    editElement(user) {
+        let index = this.items.map(item => item.id).indexOf(user.id);
+        if(index > -1) this.items[index] = user;
+        let tBody = this.content.children[0];
+        if(tBody.children[index + 1] && index > -1) tBody.replaceChild(this._createTableRow({ item: user, tBody }), tBody.children[index + 1]);
     }
 
     _deleteElement({ id, tBody }) {
