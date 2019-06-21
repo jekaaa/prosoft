@@ -4,7 +4,7 @@ import UserForm from './modules/UserForm'
 
 const server = new Server();
 
-document.addEventListener('DOMContentLoaded', () => {
+function init() {
     let res = server.getUsers();
     if(res.result) {
         let items = res.result;
@@ -14,10 +14,18 @@ document.addEventListener('DOMContentLoaded', () => {
             res = server.addUser(user);
             if(res.result) table.addElement({ ...user, id: res.result });
         });
-        table.observer.subscribe('edit', user => {
+        userForm.observer.subscribe('edit', user => {
             res = server.editUser(user);
-            if(res.result) table.editElement({ ...user, id: res.result });
+            if(res.result) table.editElement(user);
+        });
+        table.observer.subscribe('edit', user => {
+            userForm.set(user);
         });
     }
-    else console.log('Get users error ->', res.error);
-});
+}
+
+function bind() {
+    document.addEventListener('DOMContentLoaded', init);
+}
+
+bind();

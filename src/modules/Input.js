@@ -1,18 +1,22 @@
 import EventEmitter from "./EventEmitter"
 
 export default class Input {
-    constructor({ value, parent }) {
-        this.value = value;
+    constructor({ parent }) {
         this.parent = parent;
+        this.content = null;
         this.observer = new EventEmitter();
         this.render();
     }
     
     render() {
-        let input = document.createElement('input');
-        input.addEventListener('input', () => {
-            this.observer.emit('change', input.value);
+        this.content = document.createElement('input');
+        this.content.addEventListener('input', () => {
+            this.observer.emit('change', this.content.value);
         });
-        this.parent.appendChild(input);
+        this.parent.appendChild(this.content);
+    }
+
+    set(value) {
+        this.content.value = value;
     }
 }

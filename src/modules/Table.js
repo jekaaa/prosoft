@@ -15,29 +15,30 @@ export default class Table {
         ];
         this.id = 'usersTable';
         this.content = null;
+        this.tBody = null;
         this.observer = new EventEmitter();
         this.render();
     }
 
     render() {
         this.content = document.getElementById(this.id);
-        let tBody = document.createElement('tbody');
-        this._createTableHeader(tBody);
-        this._createTableContent(tBody);
-        this.content.appendChild(tBody);
+        this.tBody = document.createElement('tbody');
+        this._createTableHeader();
+        this._createTableContent();
+        this.content.appendChild(this.tBody);
     }
 
-    _createTableHeader(tBody) {
+    _createTableHeader() {
         let tr = document.createElement('tr');
         for (let i = 0; i < this.names.length; i++) {
            let th = document.createElement('th');
            th.innerHTML = this.names[i].name;
            tr.appendChild(th);
         }
-        tBody.appendChild(tr);
+        this.tBody.appendChild(tr);
     }
 
-    _createTableRow({ item, tBody }) {
+    _createTableRow({ item }) {
         let tr = document.createElement('tr');
         for (let j = 0; j < this.names.length; j++) {
             let td = document.createElement('td'); 
@@ -57,7 +58,7 @@ export default class Table {
                     break;
                 case 'delete':
                     button.addEventListener('click', () => {
-                        this._deleteElement({ id, tBody });
+                        this._deleteElement({ id });
                     });
                     td.appendChild(button);
                     break;
@@ -69,29 +70,31 @@ export default class Table {
         return tr;
     }
 
-    _createTableContent(tBody) {
-        for(let i = 0; i < this.items.length; i++) tBody.appendChild(this._createTableRow({ item: this.items[i], tBody }));
+    _createTableContent() {
+        for(let i = 0; i < this.items.length; i++) this.tBody.appendChild(this._createTableRow({ item: this.items[i] }));
     }
 
     addElement(item) {
         this.items.push(item);
-        let tBody = this.content.children[0];
-        tBody.appendChild(this._createTableRow({ item, tBody }));
+        this.tBody.appendChild(this._createTableRow({ item }));
     }
 
     editElement(user) {
         let index = this.items.map(item => item.id).indexOf(user.id);
         if(index > -1) this.items[index] = user;
-        let tBody = this.content.children[0];
-        if(tBody.children[index + 1] && index > -1) tBody.replaceChild(this._createTableRow({ item: user, tBody }), tBody.children[index + 1]);
+        
+        if(this.tBody.children[index + 1] && index > -1) {
+            let newTr = this._createTableRow({ item: user });
+            this.tBody.replaceChild(newTr, this.tBody.children[index + 1]);
+        }
     }
 
-    _deleteElement({ id, tBody }) {
+    _deleteElement({ id }) {
         let res = server.deleteUser(id);
         if(res.result) {
             let index = this.items.map(item => item.id).indexOf(id);
             this.items = this.items.filter(item => item.id !== id);
-            if(tBody.children[index + 1] && index > -1) tBody.removeChild(tBody.children[index + 1]);
+            if(this.tBody.children[index + 1] && index > -1) this.tBody.removeChild(this.tBody.children[index + 1]);
         }
     }
 }
