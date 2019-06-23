@@ -1,10 +1,9 @@
 import EventEmitter from "./EventEmitter"
 
-export default class Input {
-    constructor({ parent, name, type, valid }) {
-        this.valid = valid;
+export default class Select {
+    constructor({ parent, name, items }) {
         this.parent = parent;
-        this.type = type;
+        this.items = items;
         this.content = null;
         this.name = name;
         this.observer = new EventEmitter();
@@ -14,7 +13,7 @@ export default class Input {
     render() {
         let label = document.createElement('label');
         label.innerHTML = this.name;
-        this.content = document.createElement('input');
+        this.content = document.createElement('select');
         this.content.type = this.type;
         this.content.addEventListener('input', () => {
             this.observer.emit('change', this.content.value);

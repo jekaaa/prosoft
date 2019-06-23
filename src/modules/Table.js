@@ -4,8 +4,9 @@ import EventEmitter from './EventEmitter'
 const server = new Server();
 
 export default class Table {
-    constructor({ items }) {
+    constructor({ items, userForm }) {
         this.items = items;
+        this.userForm = userForm;
         this.names = [
             { name: 'Имя', type: 'text', value: 'name' },
             { name: 'Тип', type: 'text', value: 'type' }, 
@@ -48,15 +49,28 @@ export default class Table {
 
             switch(type) {
                 case 'text':
-                    td.innerHTML = item[this.names[j].value];
+                    let types = {
+                        1: 'Ф',
+                        2: 'Ю'
+                    };
+                    let value = this.names[j].value;
+                    if(value == 'type') td.innerHTML = types[item[value]];
+                    else td.innerHTML = item[value];
                     break;
                 case 'edit':
+                    td.className = 'user__btn-col';
+                    button.innerHTML = 'Изменить';
+                    button.className = 'user__btn user__edit';
                     button.addEventListener('click', () => {
                         this.observer.emit('edit', item);
+                        this.userForm.content.parentElement.style.display = 'flex';
                     });
                     td.appendChild(button);
                     break;
                 case 'delete':
+                    td.className = 'user__btn-col';
+                    button.innerHTML = 'Удалить';
+                    button.className = 'user__btn user__delete';
                     button.addEventListener('click', () => {
                         this._deleteElement({ id });
                     });
@@ -89,8 +103,8 @@ export default class Table {
         }
     }
 
-    _deleteElement({ id }) {
-        let res = server.deleteUser(id);
+    async _deleteElement({ id }) {
+        let res = await server.deleteUser(id);
         if(res.result) {
             let index = this.items.map(item => item.id).indexOf(id);
             this.items = this.items.filter(item => item.id !== id);

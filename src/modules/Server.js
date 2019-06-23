@@ -37,18 +37,24 @@ export default class Server {
     getUsers() {
         let result = JSON.parse(JSON.stringify(this.users));
         result.sort((user1, user2) => user1.name.toLowerCase() >= user2.name.toLowerCase() ? 1 : -1);
-        return { result };
+        return new Promise(resolve => {
+            resolve({ result });
+        });
     }
 
     deleteUser(id) {
         this.users = this.users.filter(user => user.id !== id); 
-        return { result: 'OK' };
+        return new Promise(resolve => {
+            resolve({ result: 'OK' });
+        });
     }
 
     addUser(user) {
         let result = this.users[this.users.length - 1].id + 1;
         this.users.push({ ...user, id: result });
-        return { result };
+        return new Promise(resolve => {
+            resolve({ result });
+        });
     }
 
     editUser(editedUser) {
@@ -58,6 +64,8 @@ export default class Server {
                 break;
             }
         }
-        return { result: 'OK' };
+        return new Promise(resolve => {
+            resolve({ result: 'OK' });
+        });
     }
 }

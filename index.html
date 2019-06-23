@@ -5,14 +5,24 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>Page Title</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
     <link rel="stylesheet" type="text/css" media="screen" href="css/main.css" />
     <script src="./dist/main.js"></script>
 </head>
 <body>
     <div class="container">
         <div class="content">
-            <table id="usersTable" class="user__table"></table>
-            <div id="userForm"></div>
+            <div class="user__title">
+                <h3>Таблица потребителей</h3>
+                <button title="Добавить потребителя" class="user__add" id="openUser">+</button>
+            </div>
+            <div class="user__table">
+                
+                <table id="usersTable" ></table>
+            </div>
+            <div class="user__form-container">
+                <div class="user__form" id="userForm"></div>
+            </div>
         </div>
     </div>
 </body>
