@@ -39,6 +39,50 @@ export default class Table {
         this.tBody.appendChild(tr);
     }
 
+    _renderTextTable({ item, td, value }) {
+        let types = [
+            {},
+            {
+                name: 'Ф',
+                fullName: 'Физическое лицо'
+            },
+            {
+                name: 'Ю',
+                fullName: 'Юридическое лицо'
+            }
+        ];
+        if(value == 'type') {
+            td.innerHTML = types[item[value]].name;
+            td.title = types[item[value]].fullName;
+        }
+        else td.innerHTML = item[value];
+    }
+
+    _renderEditButtonTable({ item, button, td }) {
+        td.className = 'user__btn-col';
+        button.innerHTML = 'Изменить';
+        button.className = 'user__btn user__edit';
+        button.addEventListener('click', () => {
+            this.observer.emit('edit', item);
+            this.userForm.content.parentElement.style.display = 'flex';
+            this.userForm.nameInput.content.style.border = 'solid 1px #d7d8db';
+            this.userForm.numberInput.content.style.border = 'solid 1px #d7d8db';
+            this.userForm.type = item.type;
+            this.userForm.select.value = item.type;
+        });
+        td.appendChild(button);
+    }
+
+    _renderDeleteButtonTable({ id, button, td }) {
+        td.className = 'user__btn-col';
+        button.innerHTML = 'Удалить';
+        button.className = 'user__btn user__delete';
+        button.addEventListener('click', () => {
+            this._deleteElement({ id });
+        });
+        td.appendChild(button);
+    }
+
     _createTableRow({ item }) {
         let tr = document.createElement('tr');
         for (let j = 0; j < this.names.length; j++) {
@@ -49,45 +93,13 @@ export default class Table {
 
             switch(type) {
                 case 'text':
-                    let types = [
-                        {},
-                        {
-                            name: 'Ф',
-                            fullName: 'Физическое лицо'
-                        },
-                        {
-                            name: 'Ю',
-                            fullName: 'Юридическое лицо'
-                        }
-                    ];
-                    let value = this.names[j].value;
-                    if(value == 'type') {
-                        console.log(item[value])
-                        td.innerHTML = types[item[value]].name;
-                        td.title = types[item[value]].fullName;
-                    }
-                    else td.innerHTML = item[value];
+                    this._renderTextTable({ item, td, value: this.names[j].value });
                     break;
                 case 'edit':
-                    td.className = 'user__btn-col';
-                    button.innerHTML = 'Изменить';
-                    button.className = 'user__btn user__edit';
-                    button.addEventListener('click', () => {
-                        this.observer.emit('edit', item);
-                        this.userForm.content.parentElement.style.display = 'flex';
-                        this.userForm.nameInput.content.style.border = 'solid 1px #d7d8db';
-                        this.userForm.numberInput.content.style.border = 'solid 1px #d7d8db';
-                    });
-                    td.appendChild(button);
+                    this._renderEditButtonTable({ item, button, td });
                     break;
                 case 'delete':
-                    td.className = 'user__btn-col';
-                    button.innerHTML = 'Удалить';
-                    button.className = 'user__btn user__delete';
-                    button.addEventListener('click', () => {
-                        this._deleteElement({ id });
-                    });
-                    td.appendChild(button);
+                    this._renderDeleteButtonTable({ id, button, td });
                     break;
                 default:
                     break;
@@ -103,7 +115,6 @@ export default class Table {
 
     addElement(item) {
         this.items.push(item);
-        console.log(item)
         this.tBody.appendChild(this._createTableRow({ item }));
     }
 

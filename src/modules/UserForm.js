@@ -91,15 +91,15 @@ export default class UserForm {
                 else this.observer.emit('save', { id, name, type, number });
             }
             else {
-                if(!this.nameInput.valid()) {
-                    this.nameInput.observer.emit('noValid');
-                }
-                if(!this.numberInput.valid()) {
-                    this.numberInput.observer.emit('noValid');
-                }
+                this._validInput({ name: 'nameInput' });
+                this._validInput({ name: 'numberInput' });
             }
         });
         this.content.appendChild(this.btn);
+    }
+
+    _validInput({ name }) {
+        if(!this[name].valid()) this[name].observer.emit('noValid');
     }
 
     _initOpenButton() {
@@ -132,7 +132,6 @@ export default class UserForm {
     _clearForm() {
         this.id = null;
         this.name = null;
-        this.type = null;
         this.number = null;
         this._updateForm();
     }

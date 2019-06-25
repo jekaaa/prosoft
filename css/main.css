@@ -22,6 +22,7 @@ h3 {
 	margin: 35px 30px;
 }
 .content {
+    min-width: 968px;
 	width: 100%;
 	min-height: 100vh;
 	background-color: #edeef0;

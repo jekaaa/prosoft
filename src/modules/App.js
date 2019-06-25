@@ -13,7 +13,7 @@ export default class App {
             let table = new Table({ items, userForm });
             userForm.observer.subscribe('save', async user => {
                 res = await server.addUser(user);
-                if(res.result) table.addElement({ ...user, id: res.result });
+                if(res.result) table.addElement({ ...user, id: res.result, type: userForm.type });
             });
             userForm.observer.subscribe('edit', async user => {
                 res = await server.editUser(user);
