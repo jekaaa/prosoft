@@ -48,16 +48,34 @@ export default class UserForm {
         this[content] = new Input({ parent: this.content, name, type, valid });
         this[content].observer.subscribe('change', text => { this[field] = text; });
         this[content].observer.subscribe('noValid', () => {
-            console.log('qq', this)
             this[content].content.style.border = '1px solid red';
         });
     }
 
     _createSelect({ name }) {
+        let options = [
+            {
+                value: 1,
+                text: 'Физическое лицо'
+            },
+            {
+                value: 2,
+                text: 'Юридическое лицо'
+            }
+        ];
         let label = document.createElement('label');
         label.innerHTML = name;
         this.select = document.createElement('select');
-        
+        for(let option of options) {
+            let o = document.createElement('option');
+            o.value = option.value;
+            o.text = option.text;
+            this.select.appendChild(o);
+        }
+        let self = this;
+        this.select.addEventListener('change', function() {
+            self.type = this[this.selectedIndex].value;
+        });
         this.content.appendChild(label);
         this.content.appendChild(this.select);
     }
@@ -87,7 +105,10 @@ export default class UserForm {
     _initOpenButton() {
         this.openBtn = document.getElementById('openUser');
         this.openBtn.addEventListener('click', () => {
+            this.nameInput.content.style.border = 'solid 1px #d7d8db';
+            this.numberInput.content.style.border = 'solid 1px #d7d8db';
             this.content.parentElement.style.display = 'flex';
+            this.type = this.select.options[this.select.selectedIndex].value;
             this._clearForm();
         });
     }

@@ -49,12 +49,23 @@ export default class Table {
 
             switch(type) {
                 case 'text':
-                    let types = {
-                        1: 'Ф',
-                        2: 'Ю'
-                    };
+                    let types = [
+                        {},
+                        {
+                            name: 'Ф',
+                            fullName: 'Физическое лицо'
+                        },
+                        {
+                            name: 'Ю',
+                            fullName: 'Юридическое лицо'
+                        }
+                    ];
                     let value = this.names[j].value;
-                    if(value == 'type') td.innerHTML = types[item[value]];
+                    if(value == 'type') {
+                        console.log(item[value])
+                        td.innerHTML = types[item[value]].name;
+                        td.title = types[item[value]].fullName;
+                    }
                     else td.innerHTML = item[value];
                     break;
                 case 'edit':
@@ -64,6 +75,8 @@ export default class Table {
                     button.addEventListener('click', () => {
                         this.observer.emit('edit', item);
                         this.userForm.content.parentElement.style.display = 'flex';
+                        this.userForm.nameInput.content.style.border = 'solid 1px #d7d8db';
+                        this.userForm.numberInput.content.style.border = 'solid 1px #d7d8db';
                     });
                     td.appendChild(button);
                     break;
@@ -90,6 +103,7 @@ export default class Table {
 
     addElement(item) {
         this.items.push(item);
+        console.log(item)
         this.tBody.appendChild(this._createTableRow({ item }));
     }
 

@@ -17,6 +17,7 @@ export default class Input {
         this.content = document.createElement('input');
         this.content.type = this.type;
         this.content.addEventListener('input', () => {
+            if(this.content.style.borderColor == 'red') this.content.style.border = 'solid 1px #d7d8db'; 
             this.observer.emit('change', this.content.value);
         });
         this.parent.appendChild(label);
