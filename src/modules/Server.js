@@ -1,4 +1,10 @@
+/**
+ * Класс, описывающий API сервера
+ */
 export default class Server {
+    /**
+     * Объявление 5 конкретных потребителей
+     */
     constructor() {
         this.users = [
             {
@@ -34,6 +40,14 @@ export default class Server {
         ]; 
     }
     
+    // 
+    /**
+     * Получение потребителей
+     * 
+     * @returns {promise}
+     * @resolve {object}
+     * @property {array} result   набор всех потребителей, отсортированный в алфавитном порядке по имени
+     */
     getUsers() {
         let result = JSON.parse(JSON.stringify(this.users));
         result.sort((user1, user2) => user1.name.toLowerCase() >= user2.name.toLowerCase() ? 1 : -1);
@@ -42,6 +56,14 @@ export default class Server {
         });
     }
 
+    /**
+     * Удаление потребителя по его id
+     * 
+     * @param {number} id   id удаляемого потребителя
+     * @returns {promise}
+     * @resolve {object}
+     * @property {'OK'} result   положительный результат ответа 
+     */
     deleteUser(id) {
         this.users = this.users.filter(user => user.id !== id); 
         return new Promise(resolve => {
@@ -49,6 +71,17 @@ export default class Server {
         });
     }
 
+    /**
+     * Добавление потребителя
+     * 
+     * @param {object} user
+     * @property {string} name   имя добавляемого потребителя
+     * @property {number} number   номер добавляемого потребителя
+     * @property {1|2} type   тип добавляемого потребителя, где 1 - физическое лицо, а 2 - юридическое лицо
+     * @returns {promise}
+     * @resolve {object}
+     * @property {number} id   id для нового потребителя  
+     */
     addUser(user) {
         let result = this.users[this.users.length - 1].id + 1;
         this.users.push({ ...user, id: result });
@@ -57,6 +90,18 @@ export default class Server {
         });
     }
 
+     /**
+      * Редактирование потребителя
+      * 
+      * @param {object} editedUser
+      * @property {number} id   id редактируемого потребителя
+      * @property {string} name   имя редактируемого потребителя
+      * @property {number} number   номер редактируемого потребителя
+      * @property {1|2} type   тип редактируемого потребителя, где 1 - физическое лицо, а 2 - юридическое лицо
+      * @returns {promise}
+      * @resolve {object}
+      * @property {'OK'} result   положительный результат ответа 
+      */
     editUser(editedUser) {
         for(let i = 0; i < this.users.length; i++) {
             if(this.users[i].id === editedUser.id) {
